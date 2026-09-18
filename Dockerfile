@@ -6,8 +6,10 @@
 FROM ghcr.io/home-assistant/home-assistant:stable
 
 # Seed files copied into /config on FIRST boot only (see railway-cont-init.sh):
-# a minimal configuration.yaml with the reverse-proxy trust block Railway
-# requires, plus empty automations/scripts/scenes includes.
+# base YAML files plus .storage/http with the reverse-proxy trust block for
+# Railway's edge (100.64.0.0/10) — HA 2026.x configures HTTP from that store,
+# not from configuration.yaml (a YAML http: block would stage a pending trial
+# that auto-reverts after 5 min on unattended first boots).
 COPY seed/ /seed/
 COPY railway-cont-init.sh /etc/cont-init.d/50-railway-seed.sh
 RUN chmod +x /etc/cont-init.d/50-railway-seed.sh

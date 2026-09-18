@@ -1,14 +1,12 @@
 default_config:
 
-# ---------------------------------------------------------------------------
-# Railway: all traffic arrives through Railway's reverse proxy (CGNAT range).
-# Without this block Home Assistant rejects proxied requests with HTTP 400.
-# ---------------------------------------------------------------------------
-http:
-  use_x_forwarded_for: true
-  trusted_proxies:
-    - 100.64.0.0/10
-
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
+
+# NOTE: do NOT add an `http:` block here. Since Home Assistant 2026.x the HTTP
+# integration is configured through its internal storage (/.storage/http), and
+# a YAML `http:` block only ever stages a "pending" trial that auto-reverts
+# after 5 minutes on unattended deploys. This template seeds the trusted-proxy
+# config (Railway's edge runs in 100.64.0.0/10) directly into /config/.storage/http
+# on first boot — see seed/http-storage.json and railway-cont-init.sh.
