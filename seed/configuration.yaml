@@ -1,0 +1,14 @@
+default_config:
+
+# ---------------------------------------------------------------------------
+# Railway: all traffic arrives through Railway's reverse proxy (CGNAT range).
+# Without this block Home Assistant rejects proxied requests with HTTP 400.
+# ---------------------------------------------------------------------------
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 100.64.0.0/10
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
