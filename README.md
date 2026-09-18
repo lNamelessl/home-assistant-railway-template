@@ -27,12 +27,14 @@ If your devices are Wi-Fi/cloud-first (Kasa, Tuya, Hue cloud, Shelly cloud, ESPH
 | **Web UI** | Port **8123** published on your Railway domain |
 | **Volume** | Mounted at **`/config`** — `configuration.yaml`, `automations.yaml`, `.storage/`, integrations, and the SQLite recorder database all persist across redeploys |
 | **`TZ` variable** | Your IANA timezone (e.g. `Europe/Berlin`) — time-triggered automations depend on it |
-| **Healthcheck** | `GET /` with a generous 600 s budget — first boot initializes the database before the UI answers |
+| **`PORT` variable** | `8123` — Railway requires the listening port to be declared explicitly; the UI is served there |
+| **Healthcheck** | `GET /api/onboarding` — unauthenticated, 200 before and after onboarding; generous timeout budget covers the first-boot database initialization |
 | **Graceful shutdown** | ~60 s drain so the recorder can checkpoint its SQLite database cleanly on every restart/redeploy |
 | **`DISABLE_JEMALLOC`** | Not set by default. Only on ARM64 hosts with >4K pages, set it to `true` if logs show `<jemalloc>: Unsupported system page size` (not needed on Railway x86) |
 
 ## Setup flow (no credentials shipped — you create your own admin)
 
+0. **Deploy form asks for two variables**: `PORT` — enter `8123` — and `TZ` — your IANA timezone.
 1. **Deploy**, then open your Railway domain. First boot takes **1–3 minutes** (Home Assistant creates its `.storage` scaffolding and initializes the database before the UI answers — the healthcheck accounts for this; don't panic if the page loads blank at first).
 2. The **onboarding wizard** appears: create your admin user (username + password — they exist only in your instance).
 3. Set your location/unit preferences when asked, then integrate devices: **Settings → Devices & Services → Add Integration** — search for your platform and add it **by IP or account** (discovery is unavailable in container mode).
