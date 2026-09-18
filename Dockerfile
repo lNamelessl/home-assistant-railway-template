@@ -14,6 +14,11 @@ COPY seed/ /seed/
 COPY railway-cont-init.sh /etc/cont-init.d/50-railway-seed.sh
 RUN chmod +x /etc/cont-init.d/50-railway-seed.sh
 
+# The upstream image ships no EXPOSE. Railway needs it to resolve the port it
+# healthchecks and routes to (no EXPOSE -> probes hit the default port and
+# every deployment fails its healthcheck while Home Assistant is healthy).
+EXPOSE 8123
+
 # Notes:
 # - Serves the web UI on port 8123 (exposed on the Railway domain).
 # - All persistent state (configuration.yaml, automations.yaml, .storage,
